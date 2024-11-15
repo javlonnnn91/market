@@ -31,4 +31,40 @@ class StorageProduct extends Model
     {
         return $this->belongsTo(Batch::class);
     }
+
+    public function in(int $storage_id, int $batch_id, int $product_id, int $quantity): bool
+    {
+        $storage_product = self::query()
+            ->where('batch_id', $batch_id)
+            ->where('product_id', $product_id)
+            ->where('storage_id', $storage_id)
+            ->first();
+
+        if (!$storage_product) {
+            $storage_product = new StorageProduct();
+            $storage_product->quantity = 0;
+            $storage_product->product_id = $product_id;
+            $storage_product->storage_id = $storage_id;
+            $storage_product->batch_id = $batch_id;
+        }
+        $storage_product->quantity += $quantity;
+        $storage_product->save();
+        return true;
+    }
+
+    public function out(int $storage_id, int $batch_id, int $product_id, int $quantity): bool
+    {
+        $storage_product = self::query()
+            ->where('batch_id', $batch_id)
+            ->where('product_id', $product_id)
+            ->where('storage_id', $storage_id)
+            ->first();
+
+        if ($storage_product && $storage_product->quantity >= $quantity) {
+            $storage_product->quantity -= $quantity;
+            $storage_product->save();
+        }
+        return true;
+    }
+
 }

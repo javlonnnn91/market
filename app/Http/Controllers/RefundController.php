@@ -10,14 +10,15 @@ class RefundController extends Controller
     {
         $request->validate([
             'batch_id' => 'required',
+            'storage_id' => 'required',
             'refund_type' => 'required',
             'products' => 'required|array',
             'products.*.product_id' => 'required',
             'products.*.quantity' => 'required|integer',
+            'products.*.unit_price' => 'required|numeric',
         ]);
 
         $data = $request->all();
-
         return $refund_service->refund($data);
     }
 }

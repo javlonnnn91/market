@@ -15,6 +15,7 @@ class OrderController extends Controller
             'products.*.product_id' => 'required',
             'products.*.quantity' => 'required|integer|min:1',
             'products.*.batch_id' => 'required',
+            'products.*.storage_id' => 'required',
             'products.*.price' => 'required|numeric|min:0',
         ]);
 

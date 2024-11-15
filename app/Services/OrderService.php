@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\StorageProduct;
 use App\Repositories\OrderProductRepository;
 use App\Repositories\OrderRepository;
 
@@ -11,6 +12,7 @@ class OrderService
     {
         $order_repository = new OrderRepository();
         $order_product_repository = new OrderProductRepository();
+        $storage_products = new StorageProduct();
 
         $order_input = [
             'client_id' => $data['client_id'],
@@ -30,6 +32,8 @@ class OrderService
                 'unit_price' => $product_data['price']
             ];
             $order_product_repository->create($order_product_input);
+
+            $storage_products->out($product_data['storage_id'], $product_data['batch_id'], $product_data['product_id'], $product_data['quantity']);
         }
         return true;
     }

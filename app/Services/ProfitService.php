@@ -10,7 +10,7 @@ class ProfitService
 {
     public function profit($batch_id): JsonResponse
     {
-        $batch = Batch::query()->findOrFail(['batch_id' => $batch_id]);
+        $batch = Batch::query()->findOrFail($batch_id);
         $sales = OrderProduct::query()
             ->where('batch_id', $batch_id)
             ->with('products')
