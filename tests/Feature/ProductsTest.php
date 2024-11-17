@@ -45,9 +45,7 @@ class ProductsTest extends TestCase
 
     public function test_product_error()
     {
-        $response = $this->getJson('/api/product', [
-            'batch_id' => null
-        ]);
+        $response = $this->getJson('/api/product');
 
         $response->assertStatus(422);
     }

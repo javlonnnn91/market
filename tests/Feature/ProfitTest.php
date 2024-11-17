@@ -41,7 +41,7 @@ class ProfitTest extends TestCase
             'batch_id' => $batch->id
         ]);
 
-        $response = $this->getJson("/api/profit/$batch->id");
+        $response = $this->getJson("/api/profit?batch_id=$batch->id");
 
         $response->assertStatus(200);
     }
@@ -50,6 +50,6 @@ class ProfitTest extends TestCase
     {
         $response = $this->getJson('/api/profit');
 
-        $response->assertStatus(404);
+        $response->assertStatus(422);
     }
 }

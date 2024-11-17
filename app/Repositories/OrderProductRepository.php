@@ -23,4 +23,9 @@ class OrderProductRepository extends BaseRepository
     {
         return OrderProduct::class;
     }
+
+    public function insertArray(array $order_product_data): void
+    {
+        OrderProduct::insertArray($order_product_data);
+    }
 }

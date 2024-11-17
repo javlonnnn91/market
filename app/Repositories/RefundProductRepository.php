@@ -22,4 +22,9 @@ class RefundProductRepository extends BaseRepository
     {
         return RefundProduct::class;
     }
+
+    public function insertArray(array $refund_product_data): void
+    {
+        RefundProduct::insertArray($refund_product_data);
+    }
 }

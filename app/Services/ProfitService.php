@@ -5,26 +5,24 @@ namespace App\Services;
 use App\Models\Batch;
 use App\Models\OrderProduct;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class ProfitService
 {
     public function profit($batch_id): JsonResponse
     {
         $batch = Batch::query()->findOrFail($batch_id);
+        $batch_price = $batch->total_price;
         $sales = OrderProduct::query()
             ->where('batch_id', $batch_id)
-            ->with('products')
-            ->get()
-            ->sum(function ($order_product) {
-            return $order_product->price * $order_product->quantity;
-        });
-        $profit = $sales - $batch->total_price;
+            ->sum(DB::raw('unit_price * quantity'));
+        $profit = $sales - $batch_price;
 
         return response()->json([
             'batch_id' => $batch->id,
-            'total_price' => $batch->total_price,
-            'sales' => $sales,
-            'profit' => $profit,
+            'batch_price' => Price::price($batch_price),
+            'sales' => Price::price($sales),
+            'profit' => Price::price($profit),
         ]);
     }
 }

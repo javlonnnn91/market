@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use InvalidArgumentException;
+use RuntimeException;
 
 class StorageProduct extends Model
 {
@@ -32,39 +34,36 @@ class StorageProduct extends Model
         return $this->belongsTo(Batch::class);
     }
 
-    public function in(int $storage_id, int $batch_id, int $product_id, int $quantity): bool
+    public function updateQuantity(int $storage_id, int $batch_id, int $product_id, int $quantity): bool
     {
-        $storage_product = self::query()
+        if ($quantity === 0)
+            throw new InvalidArgumentException('Quantity must not be zero.');
+
+        $storage_product = StorageProduct::query()
             ->where('batch_id', $batch_id)
             ->where('product_id', $product_id)
             ->where('storage_id', $storage_id)
             ->first();
 
         if (!$storage_product) {
+            if ($quantity < 0)
+                throw new RuntimeException('Cannot subtract quantity from a nonexistent record.');
+
             $storage_product = new StorageProduct();
             $storage_product->quantity = 0;
             $storage_product->product_id = $product_id;
             $storage_product->storage_id = $storage_id;
             $storage_product->batch_id = $batch_id;
         }
-        $storage_product->quantity += $quantity;
+
+        $new_quantity = $storage_product->quantity + $quantity;
+
+        if ($new_quantity < 0)
+            throw new RuntimeException('Insufficient stock to complete the operation.');
+
+        $storage_product->quantity = $new_quantity;
         $storage_product->save();
+
         return true;
     }
-
-    public function out(int $storage_id, int $batch_id, int $product_id, int $quantity): bool
-    {
-        $storage_product = self::query()
-            ->where('batch_id', $batch_id)
-            ->where('product_id', $product_id)
-            ->where('storage_id', $storage_id)
-            ->first();
-
-        if ($storage_product && $storage_product->quantity >= $quantity) {
-            $storage_product->quantity -= $quantity;
-            $storage_product->save();
-        }
-        return true;
-    }
-
 }
