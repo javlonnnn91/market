@@ -18,6 +18,9 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('unit_price', 15, 2);
             $table->timestamps();
+
+            $table->index('refund_id');
+            $table->index('product_id');
         });
     }
 

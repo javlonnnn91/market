@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequest;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -54,17 +54,9 @@ class ProductController extends Controller
      *     )
      * )
      */
-    public function index(Request $request, ProductService $product_service): JsonResponse
+    public function index(ProductRequest $request, ProductService $product_service): JsonResponse
     {
-        $request->validate(
-            [
-                'batch_id' => 'required|integer|exists:storage_products,batch_id'
-            ],
-            [
-                'batch_id.exists' => 'This batch does not exist'
-            ]
-        );
-        $batch_id = $request->batch_id;
-        return $product_service->products($batch_id);
+        $validated = $request->validated();
+        return $product_service->products($validated['batch_id']);
     }
 }

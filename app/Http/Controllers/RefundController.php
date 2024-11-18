@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RefundRequest;
 use App\Services\RefundService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class RefundController extends Controller
 {
@@ -78,27 +78,9 @@ class RefundController extends Controller
      *     )
      * )
      */
-    public function store(Request $request, RefundService $refund_service): JsonResponse
+    public function store(RefundRequest $request, RefundService $refund_service): JsonResponse
     {
-        $request->validate(
-            [
-                'batch_id' => 'required|exists:batches,id',
-                'storage_id' => 'required|exists:storages,id',
-                'refund_type' => 'required|in:purchase,sale',
-                'products' => 'required|array',
-                'products.*.product_id' => 'required|exists:products,id',
-                'products.*.quantity' => 'required|integer',
-                'products.*.unit_price' => 'required|numeric',
-            ],
-            [
-                'batch_id.exists' => 'Batch does not exist.',
-                'storage_id.exists' => 'Storage does not exist.',
-                'refund_type.in' => 'refund_type value must be `purchase` or `sale`.',
-                'products.*.product_id.exists' => 'Product does not exist.'
-            ]
-        );
-
-        $data = $request->all();
-        return $refund_service->refund($data);
+        $validated = $request->validated();
+        return $refund_service->refund($validated);
     }
 }

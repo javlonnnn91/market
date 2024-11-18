@@ -18,6 +18,10 @@ return new class extends Migration
             $table->foreignId('batch_id')->constrained('batches');
             $table->integer('quantity');
             $table->timestamps();
+
+            $table->index('storage_id');
+            $table->index('product_id');
+            $table->index('batch_id');
         });
     }
 

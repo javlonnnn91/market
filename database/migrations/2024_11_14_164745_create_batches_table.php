@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('provider_id')->constrained('providers');
             $table->decimal('total_price', 15, 2);
             $table->timestamps();
+
+            $table->index('provider_id');
         });
     }
 

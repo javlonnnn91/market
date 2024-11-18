@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PurchaseRequest;
 use App\Services\PurchaseService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
@@ -71,25 +71,9 @@ class PurchaseController extends Controller
      *     )
      * )
      */
-    public function store(Request $request, PurchaseService $purchase_service): JsonResponse
+    public function store(PurchaseRequest $request, PurchaseService $purchase_service): JsonResponse
     {
-        $request->validate(
-            [
-                'provider_id' => 'required|integer|exists:providers,id',
-                'storage_id' => 'required|integer|exists:storages,id',
-                'products' => 'required|array',
-                'products.*.product_id' => 'required|integer|exists:products,id',
-                'products.*.quantity' => 'required|integer',
-                'products.*.unit_price' => 'required|numeric',
-            ],
-            [
-                'provider_id.exists' => 'Provider does not exist',
-                'storage_id.exists' => 'Storage does not exist',
-                'products.*.product_id.exists' => 'Product does not exist',
-            ]
-        );
-
-        $data = $request->all();
-        return $purchase_service->purchase($data);
+        $validated = $request->validated();
+        return $purchase_service->purchase($validated);
     }
 }

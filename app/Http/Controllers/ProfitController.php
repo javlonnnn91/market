@@ -1,9 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfitRequest;
 use App\Services\ProfitService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class ProfitController extends Controller
 {
@@ -41,18 +41,10 @@ class ProfitController extends Controller
      *     )
      * )
      */
-    public function profit(Request $request, ProfitService  $profit_service): JsonResponse
+    public function profit(ProfitRequest $request, ProfitService  $profit_service): JsonResponse
     {
-        $request->validate(
-            [
-                'batch_id' => 'required|integer|exists:batches,id|exists:order_products,batch_id'
-            ],
-            [
-                'batch_id.exists' => 'This batch does not exist'
-            ]
-        );
-        $batch_id = $request->batch_id;
-        return $profit_service->profit($batch_id);
+        $validated = $request->validated();
+        return $profit_service->profit($validated['batch_id']);
     }
 }
 

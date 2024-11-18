@@ -17,6 +17,8 @@ return new class extends Migration
             $table->enum('refund_type', ['purchase', 'sale']);
             $table->decimal('total_price', 15, 2);
             $table->timestamps();
+
+            $table->index('batch_id');
         });
     }
 

@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('provider_id')->nullable()->constrained('providers');
             $table->integer('level');
             $table->timestamps();
+
+            $table->index('parent_id');
+            $table->index('provider_id');
         });
     }
 
